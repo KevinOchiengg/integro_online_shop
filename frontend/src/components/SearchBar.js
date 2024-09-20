@@ -19,7 +19,7 @@ const SearchBar = () => {
           type='search'
           name='q'
           id='q'
-          placeholder='Search for products...'
+          placeholder='Search products here...'
           onChange={(e) => setName(e.target.value)}
         />
         <button type='submit'>
