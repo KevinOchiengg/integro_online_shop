@@ -1,5 +1,6 @@
 import Axios from 'axios'
-import { PayPalButton } from 'react-paypal-button-v2'
+// import { PayPalButton } from 'react-paypal-button-v2'
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
@@ -212,10 +213,24 @@ export default function OrderPage(props) {
                         )}
                         {loadingPay && <Loading />}
 
-                        <PayPalButton
-                          amount={formatPrice(order.totalPrice)}
-                          onSuccess={successPaymentHandler}
-                        />
+                        <PayPalScriptProvider
+                          options={{ 'client-id': 'your-client-id' }}
+                        >
+                          <PayPalButtons
+                            createOrder={(data, actions) =>
+                              actions.order.create({
+                                purchase_units: [
+                                  { amount: { value: order.totalPrice } },
+                                ],
+                              })
+                            }
+                            onApprove={(data, actions) =>
+                              actions.order.capture().then((details) => {
+                                dispatch(payOrder(order, details))
+                              })
+                            }
+                          />
+                        </PayPalScriptProvider>
                       </>
                     )}
                   </li>
